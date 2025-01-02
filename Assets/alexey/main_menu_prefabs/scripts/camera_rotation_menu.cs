@@ -6,8 +6,6 @@ public class camera_rotation_menu : MonoBehaviour
 {
     public GameObject menu_camera;
     public float rotation_speed = 1;
-    float max_x = 0.06892f;
-    float min_x = 0.06882f;
     void Start()
     {
 
