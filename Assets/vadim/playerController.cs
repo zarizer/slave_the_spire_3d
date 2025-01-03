@@ -6,24 +6,28 @@ public class playerController : MonoBehaviour
     private float isJumpAxis;
     private bool isShiftHolding;
 
-    public GameObject player;
     public float jump_f;
+    RaycastHit hit;
     public float speed_f;
     public float run_speed_multiplier;
     Vector3 viewDirection;
     Vector3 moveDirection;
 
 
+    private float isMouseScrollingAxis;
+
     public GameObject view;
     public float radiusFromPlayer;
     public float sensitivity;
+    public float playerRotationSmoothing;
+    public float mouseScrollingSpeed;
 
 
     private void Start()
     {
-        player_control = player.GetComponent<Rigidbody>();
+        player_control = GetComponent<Rigidbody>();
 
-        viewDirection = (view.transform.position - player.transform.position).normalized;
+        viewDirection = (view.transform.position - transform.position).normalized;
 
     }
 
@@ -32,9 +36,9 @@ public class playerController : MonoBehaviour
 
         isJumpAxis = Input.GetAxis("Jump");
         isShiftHolding = Input.GetKey(KeyCode.LeftShift);
+        isMouseScrollingAxis = Input.GetAxis("Mouse ScrollWheel");
 
         RotateView();
-
 
     }
 
@@ -42,6 +46,7 @@ public class playerController : MonoBehaviour
     {
         MovementLogic();
         JumpLogic();
+        
     }
 
     private void MovementLogic()
@@ -49,45 +54,59 @@ public class playerController : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         moveDirection = new Vector3(-viewDirection.x, 0.0f, -viewDirection.z).normalized;
-        Debug.Log(moveDirection);
         Vector3 movement = moveDirection * moveVertical + -Vector3.Cross(moveDirection, new Vector3(0.0f, 1.0f, 0.0f)) * moveHorizontal;
-        movement = Vector3.ClampMagnitude(movement, speed_f);
+        movement = Vector3.ClampMagnitude(movement * speed_f, speed_f);
 
         if (isShiftHolding)
         {
-            player_control.MovePosition(player.transform.position + movement * speed_f * run_speed_multiplier * Time.fixedDeltaTime);
+            player_control.MovePosition(transform.position + movement * run_speed_multiplier * Time.fixedDeltaTime);
         }
         else
         {
-            player_control.MovePosition(player.transform.position + movement * speed_f * Time.fixedDeltaTime);
+            player_control.MovePosition(transform.position + movement * Time.fixedDeltaTime);
         }
 
+        if (movement != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), playerRotationSmoothing*Time.fixedDeltaTime);
+        }
     }
 
     private void JumpLogic()
     {
         if (isJumpAxis > 0)
         {
-            if (player_control.linearVelocity.y == 0)
+            Debug.Log(hit.distance);
+            Debug.Log(hit.point.y);
+            if (Physics.Raycast(transform.position, -Vector3.up, out hit))
             {
-                player_control.AddForce(Vector3.up * jump_f, ForceMode.Impulse);
+                if (hit.distance < 1.07f)
+                    player_control.AddForce(Vector3.up * jump_f, ForceMode.Impulse);
             }
         }
     }
 
     private void RotateView()
     {
-        
-        view.transform.position = player.transform.position + viewDirection * radiusFromPlayer;
-        
+        radiusFromPlayer += isMouseScrollingAxis * mouseScrollingSpeed;
+        if (radiusFromPlayer < 1.5f)
+            radiusFromPlayer = 1.5f;
 
-        view.transform.RotateAround(player.transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity);
-        view.transform.RotateAround(player.transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity);
+        if (radiusFromPlayer > 50f)
+            radiusFromPlayer = 50f;
 
 
-        viewDirection = (view.transform.position - player.transform.position).normalized;
+        transform.TransformDirection(viewDirection);
+        view.transform.position = transform.position + viewDirection * radiusFromPlayer;
 
-        view.transform.LookAt(player.transform.position);
+
+        view.transform.RotateAround(transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity);
+        view.transform.RotateAround(transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity);
+
+
+        viewDirection = (view.transform.position - transform.position).normalized;
+
+        view.transform.LookAt(transform.position);
     }
 
 }
