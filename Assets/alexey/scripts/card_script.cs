@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class card_script : MonoBehaviour
 {
@@ -8,29 +11,61 @@ public class card_script : MonoBehaviour
     public string _name;
     public string _ext_description;
     public string _state;
+    public bool _picked;
+    public bool _show_description;
+    public bool _rare;
+    public Vector2 _card_destination_position;
     public GameObject _name_text;
+    public GameObject _ext_description_object;
     public GameObject _ext_description_text;
+    public GameObject _particles; 
+    public GameObject _card_image_object;
     
     //public List<_desc_slots_struct> _desc_slots_ser;
     public List<GameObject> _desc_slots;
     public GameObject _card;
-    Vector2 _card_destination_position;
+    //[System.Serializable]
+    
 
     public int energy;
 
     void Start()
     {
-        //_desc_slots = Deserialize_slots(_desc_slots_ser);
-        _card_destination_position = new Vector2(_card.transform.position.x, _card.transform.position.y);
+        //_card_destination_position = new Vector2(_card.transform.position.x, _card.transform.position.y);
     }
     void Update()
     {
-
+        CheckPicked();
+        CheckDescription();
+        MoveCard();
     }
     [Serializable]
     public struct _desc_slots_struct
     {
         public GameObject _object;
+    }
+
+    void CheckPicked()
+    {
+        if (_picked)
+        {
+            _particles.SetActive(true);    
+        }
+        else
+        {
+            _particles.SetActive(false);
+        }
+    }
+    void CheckDescription()
+    {
+        if (_show_description)
+        {
+            _ext_description_object.SetActive(true);
+        }
+        else
+        {
+            _ext_description_object.SetActive(false);
+        }
     }
 
     List<GameObject> Deserialize_slots(List<_desc_slots_struct> _desc_slots_ser)
@@ -41,5 +76,10 @@ public class card_script : MonoBehaviour
             new_list.Add(item._object);
         }
         return new_list;
+    }
+
+    void MoveCard()
+    {
+        _card.transform.position = Vector3.Lerp(_card.transform.position, _card_destination_position, 0.01f);
     }
 }
