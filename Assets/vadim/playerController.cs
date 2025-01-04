@@ -1,4 +1,6 @@
+using System.Drawing;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class playerController : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class playerController : MonoBehaviour
 
     public GameObject view;
     Vector3 viewDirection;
+    RaycastHit viewHit;
     public float radiusFromPlayer;
     public float sensitivity;
     public float playerRotationSmoothing;
@@ -81,6 +84,14 @@ public class playerController : MonoBehaviour
                 player_control.AddForce(Vector3.up * jump_f, ForceMode.Impulse);
             }
         }
+
+        if (!isGrounded)
+        {
+            if (player_control.linearVelocity.y < 0f)
+            {
+                player_control.AddForce(-Vector3.up*0.2f, ForceMode.VelocityChange);
+            }
+        }
     }
 
     private void RotateView()
@@ -92,10 +103,15 @@ public class playerController : MonoBehaviour
         if (radiusFromPlayer > 50f)
             radiusFromPlayer = 50f;
 
-
-        transform.TransformDirection(viewDirection);
-        view.transform.position = transform.position + viewDirection * radiusFromPlayer;
-
+        if (Physics.Raycast(transform.position, viewDirection, out viewHit, radiusFromPlayer))
+        {
+            Vector3 newPoint = viewHit.point - viewDirection;
+            view.transform.position = newPoint.normalized == viewDirection ? newPoint : viewHit.point;
+        }
+        else
+        {
+            view.transform.position = transform.position + viewDirection * radiusFromPlayer;
+        }
 
         view.transform.RotateAround(transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity);
         view.transform.RotateAround(transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity);
