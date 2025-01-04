@@ -7,16 +7,16 @@ public class playerController : MonoBehaviour
     private bool isShiftHolding;
 
     public float jump_f;
-    RaycastHit hit;
     public float speed_f;
     public float run_speed_multiplier;
-    Vector3 viewDirection;
+    public bool isGrounded;
     Vector3 moveDirection;
 
 
     private float isMouseScrollingAxis;
 
     public GameObject view;
+    Vector3 viewDirection;
     public float radiusFromPlayer;
     public float sensitivity;
     public float playerRotationSmoothing;
@@ -76,12 +76,9 @@ public class playerController : MonoBehaviour
     {
         if (isJumpAxis > 0)
         {
-            Debug.Log(hit.distance);
-            Debug.Log(hit.point.y);
-            if (Physics.Raycast(transform.position, -Vector3.up, out hit))
+            if (isGrounded)
             {
-                if (hit.distance < 1.07f)
-                    player_control.AddForce(Vector3.up * jump_f, ForceMode.Impulse);
+                player_control.AddForce(Vector3.up * jump_f, ForceMode.Impulse);
             }
         }
     }
