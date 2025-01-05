@@ -49,7 +49,7 @@ public class playerController : MonoBehaviour
     {
         MovementLogic();
         JumpLogic();
-        
+
     }
 
     private void MovementLogic()
@@ -71,7 +71,7 @@ public class playerController : MonoBehaviour
 
         if (movement != Vector3.zero)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), playerRotationSmoothing*Time.fixedDeltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), playerRotationSmoothing * Time.fixedDeltaTime);
         }
     }
 
@@ -89,7 +89,7 @@ public class playerController : MonoBehaviour
         {
             if (player_control.linearVelocity.y < 0f)
             {
-                player_control.AddForce(-Vector3.up*0.2f, ForceMode.VelocityChange);
+                player_control.AddForce(-Vector3.up * 0.2f, ForceMode.VelocityChange);
             }
         }
     }
@@ -100,8 +100,8 @@ public class playerController : MonoBehaviour
         if (radiusFromPlayer < 1.5f)
             radiusFromPlayer = 1.5f;
 
-        if (radiusFromPlayer > 50f)
-            radiusFromPlayer = 50f;
+        if (radiusFromPlayer > 30f)
+            radiusFromPlayer = 30f;
 
         if (Physics.Raycast(transform.position, viewDirection, out viewHit, radiusFromPlayer))
         {
@@ -113,13 +113,36 @@ public class playerController : MonoBehaviour
             view.transform.position = transform.position + viewDirection * radiusFromPlayer;
         }
 
-        view.transform.RotateAround(transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity);
-        view.transform.RotateAround(transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity);
 
+        ViewRotateAround(transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity, "y");
+        ViewRotateAround(transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity, "x");
 
         viewDirection = (view.transform.position - transform.position).normalized;
 
         view.transform.LookAt(transform.position);
+    }
+
+    void ViewRotateAround(Vector3 point, Vector3 axis, float angle, string mouseAxis)
+    {
+        Vector3 vector = view.transform.position;
+        Quaternion quaternion = Quaternion.AngleAxis(angle, axis);
+        Vector3 vector2 = vector - point;
+        float dist = vector2.magnitude;
+        Vector3 vector3 = quaternion * vector2;
+
+        vector3 = vector2 + Vector3.ClampMagnitude(vector3 - vector2, sensitivity);
+
+        if (mouseAxis == "y")
+        {
+            if (vector3.x > 0 && vector2.x <= 0 || vector3.x < 0 && vector2.x >= 0)
+                vector3.x = vector2.x;
+            if (vector3.z > 0 && vector2.z <= 0 || vector3.z < 0 && vector2.z >= 0)
+                vector3.z = vector2.z;
+        }
+        
+        vector3 = vector3.normalized * dist;
+        vector = point + vector3;
+        view.transform.position = vector;
     }
 
 }
