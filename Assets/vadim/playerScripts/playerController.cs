@@ -1,4 +1,5 @@
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,6 +21,7 @@ public class playerController : MonoBehaviour
     public GameObject view;
     Vector3 viewDirection;
     RaycastHit viewHit;
+    
     public float radiusFromPlayer;
     public float sensitivity;
     public float playerRotationSmoothing;
@@ -31,6 +33,7 @@ public class playerController : MonoBehaviour
         player_control = GetComponent<Rigidbody>();
 
         viewDirection = (view.transform.position - transform.position).normalized;
+        
 
     }
 
@@ -114,15 +117,17 @@ public class playerController : MonoBehaviour
         }
 
 
-        ViewRotateAround(transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity, "y");
-        ViewRotateAround(transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity, "x");
+        ViewRotateAround(transform.position, view.transform.right, -Input.GetAxis("Mouse Y") * sensitivity);
+        ViewRotateAround(transform.position, view.transform.up, Input.GetAxis("Mouse X") * sensitivity);
+        
 
         viewDirection = (view.transform.position - transform.position).normalized;
 
-        view.transform.LookAt(transform.position);
+        Vector3 ViewPointSmallUpper = new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z);
+        view.transform.LookAt(ViewPointSmallUpper);
     }
 
-    void ViewRotateAround(Vector3 point, Vector3 axis, float angle, string mouseAxis)
+    void ViewRotateAround(Vector3 point, Vector3 axis, float angle)
     {
         Vector3 vector = view.transform.position;
         Quaternion quaternion = Quaternion.AngleAxis(angle, axis);
