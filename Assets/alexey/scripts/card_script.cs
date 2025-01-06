@@ -21,17 +21,14 @@ public class card_script : MonoBehaviour
     public GameObject _particles; 
     public GameObject _card_image_object;
     
-    //public List<_desc_slots_struct> _desc_slots_ser;
     public List<GameObject> _desc_slots;
     public GameObject _card;
-    //[System.Serializable]
-    
 
     public int energy;
 
     void Start()
     {
-        //_card_destination_position = new Vector2(_card.transform.position.x, _card.transform.position.y);
+
     }
     void Update()
     {
@@ -82,4 +79,6 @@ public class card_script : MonoBehaviour
     {
         _card.transform.position = Vector3.Lerp(_card.transform.position, _card_destination_position, 0.01f);
     }
+
+    
 }

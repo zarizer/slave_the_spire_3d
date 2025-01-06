@@ -13,6 +13,8 @@ public class resourses_initializer : MonoBehaviour
     Dictionary<string, GameObject> _desc_stats;
     public List<_card_image_map> _card_images_ser;
     Dictionary<string, Sprite> _card_images;
+
+    public battle_main_script battle_main;
     void Start()
     {
         _desc_stats = Deserialize_stats(_desc_stats_map_ser);
@@ -20,6 +22,7 @@ public class resourses_initializer : MonoBehaviour
         InitializeRewardCards(_reward_cards_canvas);
         InitializeSpecialCards(_special_cards_canvas);
         InitializeStoreCards(_store_cards_canvas);
+        
     }
 
 
