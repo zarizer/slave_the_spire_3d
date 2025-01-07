@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Build.Content;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -25,6 +26,9 @@ public class card_script : MonoBehaviour
     public GameObject _card;
 
     public int energy;
+    public bool burn = false;
+    public bool efir = false;
+    public bool once = false;
 
     void Start()
     {
@@ -77,7 +81,7 @@ public class card_script : MonoBehaviour
 
     void MoveCard()
     {
-        _card.transform.position = Vector3.Lerp(_card.transform.position, _card_destination_position, 0.01f);
+        _card.transform.position = Vector3.Lerp(_card.transform.position, _card_destination_position, 0.03f);
     }
 
     

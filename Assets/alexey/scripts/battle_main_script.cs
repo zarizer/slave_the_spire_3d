@@ -4,6 +4,7 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 
@@ -31,6 +32,8 @@ public class battle_main_script : MonoBehaviour
     public int _picked_card_number = 0;
     bool _is_cards_given = false;
 
+    //public card_use_script _card_use_script;
+
     
 
 
@@ -42,12 +45,15 @@ public class battle_main_script : MonoBehaviour
     void Update()
     {
         UpdateCharacterStatsInterface();
+        PickedCardUse();
+        OnMouseWheel();
+        ReloadHand();
     }
 
     private void FixedUpdate()
     {
         RecountCardsDestinationPosition();
-        OnMouseWheel();
+        
     }
 
     void UpdateCharacterStatsInterface()
@@ -134,10 +140,10 @@ public class battle_main_script : MonoBehaviour
 
     void CardMovesOnBattleStart()
     {
-        foreach(Transform card in Deck.transform)
+        for (int i = Deck.transform.childCount-1; i >=0 ; i--)
         {
-            ChangeParent(card, Getting);
-        } 
+            ChangeParent(Deck.transform.GetChild(i), Getting);
+        }
         for(int i = 0; i < _hand_size; i++)
         {
             TakeCard();
@@ -155,10 +161,11 @@ public class battle_main_script : MonoBehaviour
     {
         if (Getting.transform.childCount == 0)
         {
-            foreach (GameObject card in Reset.transform) 
+            for (int i = Reset.transform.childCount-1; i >=0; i--)
             {
-                ChangeParent(card, Getting);
+                ChangeParent(Reset.transform.GetChild(i), Getting);
             }
+ 
         }
         if (Getting.transform.childCount == 0)
         {
@@ -186,6 +193,52 @@ public class battle_main_script : MonoBehaviour
         obj.transform.SetParent(new_parent);
     }
 
+    void PickedCardUse()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            GameObject cur_card = Hand.transform.GetChild(_picked_card_number).gameObject;
+            card_script cur_card_script = cur_card.GetComponent<card_script>();
+            string card_name = cur_card.GetComponent<card_script>()._name;
+            if (_energy>= cur_card_script.energy)
+            {
+                _energy -= cur_card_script.energy;
+                //_card_use_script.use(card_name);
+                if (cur_card_script.efir || cur_card_script.burn)
+                {
+                    ChangeParent(cur_card, Deck);
+                    Debug.Log(8);
+                }
+                if (cur_card_script.once)
+                {
+                    Destroy(cur_card);
+                }
+                else
+                {
+                    ChangeParent(cur_card, Reset);
+                    Debug.Log(9);
+                }
+                cur_card_script._picked = false;
+            }
+        }
+    }
+
+    void ReloadHand()
+    {
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            for (int i = Hand.transform.childCount-1; i >=0; i--)
+            {
+                ChangeParent(Hand.transform.GetChild(i), Reset);
+            }
+            for (int i = 0; i < _hand_size; i++)
+            {
+                TakeCard();
+            }
+        }
+        
+    }
+
     void OnMouseWheel()
     {
         if (_is_cards_given)
@@ -211,7 +264,11 @@ public class battle_main_script : MonoBehaviour
                     _picked_card_number = Hand.transform.childCount-1;
                 }
             }
-            Hand.transform.GetChild(_picked_card_number).GetComponent<card_script>()._picked = true;
+            if (Hand.transform.childCount > 0)
+            {
+                Hand.transform.GetChild(_picked_card_number).GetComponent<card_script>()._picked = true;
+            }
+            
         }
         
     }
