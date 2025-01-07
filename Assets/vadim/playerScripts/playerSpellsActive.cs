@@ -25,6 +25,8 @@ public class playerSpellsActive : MonoBehaviour
         ViewRay = view.GetComponent<Camera>().ScreenPointToRay(ViewRayStartPos);
 
         CheckSpellChose();
+
+        ItemIteraction();
     }
 
     void CheckSpellChose()
@@ -32,6 +34,20 @@ public class playerSpellsActive : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             UseCard(spellID);
+        }
+    }
+
+    void ItemIteraction()
+    {
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            if (Physics.Raycast(ViewRay, out hit))
+            {
+                if (hit.transform.gameObject.CompareTag("ItemIteraction"))
+                {
+                    hit.transform.gameObject.GetComponent<IteractionScript>().ItemIteraction();
+                }
+            }
         }
     }
 

@@ -44,4 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150bdf063a5b9744b9eeb226bbc86597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SkyPartPrefab: {fileID: 4975656782676769118, guid: e3051acbfee0c6240ba453f02ef34397, type: 3}
+  SkyPartPrefab: {fileID: 5017176175186090325, guid: e3051acbfee0c6240ba453f02ef34397, type: 3}
+  Kara: {fileID: 3660616061431419861, guid: 9fb47f7fdd835104a903d83a30493a90, type: 3}
+  radius: 15
+  height: 60
+  particlesSpeed: 90
+  smoothnessDarkGlobalLight: 0.4
