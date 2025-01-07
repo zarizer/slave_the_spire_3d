@@ -35,8 +35,7 @@ public class playerSpellsActive : MonoBehaviour
             {
                 if (Physics.Raycast(ViewRay, out hit))
                 {
-                    GameObject heaven_kara = Instantiate(prefabHeavenKara);
-                    heaven_kara.transform.position = hit.point;
+                    GameObject heaven_kara = Instantiate(prefabHeavenKara, hit.point, prefabHeavenKara.transform.rotation);
                 }
             }
         }
