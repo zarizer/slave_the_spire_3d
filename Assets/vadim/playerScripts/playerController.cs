@@ -99,7 +99,9 @@ public class playerController : MonoBehaviour
 
     private void RotateView()
     {
-        radiusFromPlayer += isMouseScrollingAxis * mouseScrollingSpeed;
+        if (Input.GetKey(KeyCode.LeftControl))
+            radiusFromPlayer += isMouseScrollingAxis * mouseScrollingSpeed;
+
         if (radiusFromPlayer < 1.5f)
             radiusFromPlayer = 1.5f;
 
