@@ -31,13 +31,22 @@ public class playerSpellsActive : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            if (spellID == "heaven_kara")
-            {
+            UseCard(spellID);
+        }
+    }
+
+    void UseCard(string cardID)
+    {
+        switch(cardID)
+        {
+            case "heaven_kara":
                 if (Physics.Raycast(ViewRay, out hit))
                 {
                     GameObject heaven_kara = Instantiate(prefabHeavenKara, hit.point, prefabHeavenKara.transform.rotation);
                 }
-            }
+
+                break;
+
         }
     }
 }
