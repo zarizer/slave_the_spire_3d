@@ -53,7 +53,7 @@ public class HeavenKaraScript : MonoBehaviour
 
         globalLight.transform.rotation = Quaternion.Slerp(globalLight.transform.rotation, Quaternion.LookRotation(Vector3.up), smoothnessDarkGlobalLight * Time.deltaTime);
 
-        if (Time.time - startTime > 6 && !isKaraInstatiated)
+        if (Time.time - startTime > 5 && !isKaraInstatiated)
         {
             isKaraInstatiated = true;
             GameObject kara = Instantiate(Kara, transform.position, Kara.transform.rotation, transform);
@@ -61,11 +61,10 @@ public class HeavenKaraScript : MonoBehaviour
         }
             
 
-        if (Time.time - startTime > 9)
+        if (Time.time - startTime > 8)
         {
             globalLight.transform.rotation = prevGlobalLightRotation;
             Destroy(transform.gameObject);
-            
         }
     }
 }
